@@ -52,6 +52,13 @@ This section provides a systematic overview of key genetic terms, designed to be
 *   **Fertilization:** The process where a male gamete (sperm) fuses with a female gamete (egg) to form a single new cell.
 *   **Zygote:** The single cell formed by the fusion of a sperm and an egg during fertilization. It contains a full set of chromosomes (46 in humans, 23 from each parent) and will develop into an embryo.
 
+### 7. Sex Chromosomes and Gender Determination
+
+*   **Sex Chromosomes:** The 23rd pair of chromosomes in humans is called the sex chromosomes. Females have two X chromosomes (XX), while males have one X and one Y chromosome (XY).
+*   **How Gender is Determined:** Gender is determined at fertilization. The egg always carries an X chromosome. The sperm can carry either an X or a Y chromosome. If a sperm with an X fertilizes the egg, the zygote is XX (female). If a sperm with a Y fertilizes the egg, the zygote is XY (male).
+*   **Function:** The Y chromosome contains genes that trigger the development of male characteristics. Without it, the default development is female.
+*   **Connection to Chromosomes:** This shows how the combination of chromosomes from parents influences traits like gender.
+
 ---
 
 **Summary Flow:**
@@ -59,3 +66,5 @@ This section provides a systematic overview of key genetic terms, designed to be
 **Nucleus** (contains) → **Chromosomes** (made of) → **DNA** (contains) → **Genes** (code for traits)
 
 **Down Syndrome** is a condition resulting from an extra **Chromosome**.
+
+**Gender** is determined by the **Sex Chromosomes** (XX or XY).

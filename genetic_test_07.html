@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetics Quiz — From Genetic.md</title>
+    <style>
+        body{font-family:Arial,Helvetica,sans-serif;background:#f4f4f4;color:#222;margin:20px}
+        .container{max-width:900px;margin:auto;background:#fff;padding:28px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.08)}
+        h1{color:#0056b3;text-align:center;border-bottom:2px solid #0056b3;padding-bottom:10px}
+        .quiz{margin-top:20px}
+        .q{font-weight:700;margin-bottom:8px}
+        .choices{display:grid;gap:8px;margin-bottom:12px}
+        .choices input{display:none}
+        .choices label{display:block;padding:10px;border-radius:6px;background:#f8f9fa;cursor:pointer}
+        .choices label.correct{background:#28a745;color:#fff}
+        .choices label.incorrect{background:#dc3545;color:#fff}
+        .choices label.disabled{opacity:.65;cursor:default}
+        .controls{margin-top:10px}
+        .controls button{margin-right:8px;padding:8px 12px}
+        #qCounter{font-weight:600;margin-bottom:10px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Genetics Quiz — Derived from Genetic.md</h1>
+        <p>This short quiz uses questions based on the `Genetic.md` summary. Select an answer to check it immediately.</p>
+
+        <div class="quiz">
+            <div id="qCounter"></div>
+            <div id="questionContainer"></div>
+
+            <div class="controls">
+                <button id="prevBtn">Previous</button>
+                <button id="nextBtn">Next</button>
+                <button id="resetBtn">Reset All</button>
+                <button id="toggleKey">Show Answer Key</button>
+            </div>
+
+            <div id="answerKey" style="display:none;margin-top:12px">
+                <strong>Answer Key:</strong>
+                <ol id="keyList"></ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        // Grade 9 Level Questions - Sex Chromosomes and Gender Determination
+        const qa = [
+            { q: 'What are the sex chromosomes for a female?', choices: ['XX','XY','YY','XXY'], correct: 'A' },
+            { q: 'What are the sex chromosomes for a male?', choices: ['XX','XY','YY','XXY'], correct: 'B' },
+            { q: 'Which chromosome does the egg always carry?', choices: ['X','Y','Both X and Y','Neither'], correct: 'A' },
+            { q: 'Which chromosomes can the sperm carry?', choices: ['Only X','Only Y','X or Y','Both X and Y'], correct: 'C' },
+            { q: 'If a sperm with a Y chromosome fertilizes an egg, what gender is the offspring?', choices: ['Female','Male','Both','Neither'], correct: 'B' },
+            { q: 'If a sperm with an X chromosome fertilizes an egg, what gender is the offspring?', choices: ['Female','Male','Both','Neither'], correct: 'A' },
+            { q: 'What chromosome contains genes that trigger male development?', choices: ['X','Y','Both','Neither'], correct: 'B' },
+            { q: 'What is the 23rd pair of chromosomes called?', choices: ['Autosomes','Sex chromosomes','Gametes','Zygotes'], correct: 'B' }
+        ];
+
+        const answers = qa.map(x=>x.correct);
+        const container = document.getElementById('questionContainer');
+        const keyList = document.getElementById('keyList');
+
+        // render key list
+        qa.forEach((item, i)=>{
+            const li = document.createElement('li'); li.textContent = item.correct; keyList.appendChild(li);
+        });
+
+        // render questions
+        qa.forEach((item, idx)=>{
+            const wrap = document.createElement('div');
+            wrap.className = 'question';
+            wrap.dataset.index = idx;
+            const qdiv = document.createElement('div'); qdiv.className='q'; qdiv.textContent = item.q; wrap.appendChild(qdiv);
+            const choices = document.createElement('div'); choices.className='choices';
+
+            ['A','B','C','D'].forEach((letter,i)=>{
+                const input = document.createElement('input');
+                input.type='radio'; input.id = 'g'+(idx+1)+letter; input.name = 'g'+(idx+1); input.value = letter;
+                const label = document.createElement('label'); label.htmlFor = input.id; label.id = input.id + '-label';
+                label.textContent = letter + '. ' + (item.choices[i] || '');
+                choices.appendChild(input); choices.appendChild(label);
+            });
+            wrap.appendChild(choices); container.appendChild(wrap);
+        });
+
+        let questions = Array.from(document.querySelectorAll('.quiz .question'));
+        let current = 0;
+        const qCounter = document.getElementById('qCounter');
+
+        function showQuestion(i){
+            questions.forEach((q,idx)=> q.style.display = (idx===i? 'block':'none'));
+            current = i; qCounter.textContent = 'Question ' + (current+1) + ' of ' + questions.length;
+            document.getElementById('prevBtn').disabled = (current===0);
+            document.getElementById('nextBtn').disabled = (current===questions.length-1);
+        }
+
+        function clearHighlights(qEl){ qEl.querySelectorAll('label').forEach(l=> l.classList.remove('correct','incorrect','disabled')); }
+
+        function checkQuestion(qEl){
+            const idx = parseInt(qEl.dataset.index,10);
+            const correct = answers[idx];
+            const sel = qEl.querySelector('input[type=radio]:checked');
+            clearHighlights(qEl);
+            const correctLabel = qEl.querySelector('#g'+(idx+1)+correct+'-label'); if(correctLabel) correctLabel.classList.add('correct');
+            if(sel && sel.value !== correct){ const selLabel = qEl.querySelector('#'+sel.id+'-label'); if(selLabel) selLabel.classList.add('incorrect'); }
+            qEl.querySelectorAll('input[type=radio]').forEach(r=> r.disabled = true);
+            qEl.querySelectorAll('label').forEach(l=> l.classList.add('disabled'));
+            qEl.dataset.checked = 'true';
+        }
+
+        // attach listeners
+        document.querySelectorAll('.quiz .choices input[type=radio]').forEach(r=> r.addEventListener('change', function(){
+            const qEl = this.closest('.question'); if(qEl.dataset.checked !== 'true') checkQuestion(qEl);
+        }));
+
+        document.getElementById('nextBtn').addEventListener('click', ()=>{ if(current < questions.length-1) showQuestion(current+1); });
+        document.getElementById('prevBtn').addEventListener('click', ()=>{ if(current > 0) showQuestion(current-1); });
+        document.getElementById('resetBtn').addEventListener('click', ()=>{
+            questions.forEach(q=>{ q.dataset.checked='false'; q.querySelectorAll('input[type=radio]').forEach(r=>{r.checked=false; r.disabled=false}); clearHighlights(q); });
+            showQuestion(0);
+        });
+        document.getElementById('toggleKey').addEventListener('click', function(){ const key = document.getElementById('answerKey'); if(key.style.display==='none'){ key.style.display='block'; this.textContent='Hide Answer Key'; } else { key.style.display='none'; this.textContent='Show Answer Key'; } });
+
+        // start
+        showQuestion(0);
+    })();
+    </script>
+</body>
+</html>
