@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGCSE Science Grade 9: Genetics Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-top: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #007bff;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul {
+            list-style-type: circle;
+            margin-left: 20px;
+        }
+        strong {
+            color: #555;
+        }
+        .summary-flow {
+            background-color: #e9f7ef;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 4px;
+        }
+        /* Quiz styles */
+        .quiz { margin-top: 24px; }
+        .quiz .q { font-weight: bold; margin-bottom: 6px; }
+        .quiz .choices { display: grid; gap:8px; margin-bottom:12px; }
+        .quiz .choices input { display:none; }
+        .quiz .choices label { display:block; padding:8px 10px; border-radius:4px; background:#f8f9fa; cursor:pointer; }
+        .quiz .choices label.correct { background:#28a745; color:#ffffff; }
+        .quiz .choices label.incorrect { background:#dc3545; color:#ffffff; }
+        .quiz-controls button { margin-right:8px; padding:8px 12px; }
+        /* single-question view */
+        .quiz .question { display: none; }
+        .quiz .question.active { display: block; }
+        .quiz .choices label.disabled { opacity: 0.6; cursor: default; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IGCSE Science Grade 9: Genetics - Systematic Knowledge</h1>
+        
+            <h2>Multiple Choice Questions</h2>
+            <div class="quiz">
+                <div id="qCounter" style="font-weight:600;margin-bottom:8px"></div>
+                <div id="questionContainer"></div>
+
+                <div class="quiz-controls">
+                    <button type="button" id="prevBtn">Previous</button>
+                    <button type="button" id="nextBtn">Next</button>
+                    <button type="button" id="resetBtn">Reset All</button>
+                    <button type="button" id="toggleKey">Show Answer Key</button>
+                </div>
+
+                <div id="result" aria-live="polite" style="margin-top:12px;"></div>
+
+                <div id="answerKey" style="display:none;margin-top:12px;">
+                    <strong>Answer Key:</strong>
+                    <ol>
+                        <li>A</li>
+                        <li>B</li>
+                        <li>B</li>
+                        <li>A</li>
+                        <li>B</li>
+                        <li>A</li>
+                        <li>C</li>
+                        <li>C</li>
+                    </ol>
+                </div>
+            </div>
+
+            <script>
+                (function(){
+                    // Questions generated from Genetic.md (concise Q&A form)
+                    const qa = [
+                        { q: 'Where is DNA primarily found?', choices: ['Nucleus','Cytoplasm','Mitochondria','Ribosome'], correct: 'A' },
+                        { q: 'How many chromosomes do human body cells normally have?', choices: ['23','46','22','92'], correct: 'B' },
+                        { q: 'A gene is:', choices: ['A whole chromosome','A segment of DNA','A protein','A cell'], correct: 'B' },
+                        { q: 'Down syndrome is caused by:', choices: ['An extra chromosome 21 (Trisomy 21)','A missing X chromosome','A single-gene mutation','A mitochondrial defect'], correct: 'A' },
+                        { q: 'Human gametes (sex cells) contain how many chromosomes?', choices: ['46','23','92','11'], correct: 'B' },
+                        { q: 'Which base pairs are correct in DNA?', choices: ['A-T and G-C','A-G and T-C','A-C and G-T','A-U and G-C'], correct: 'A' },
+                        { q: 'Chromosomes are made of DNA and which proteins?', choices: ['Lipids','Carbohydrates','Histones','Enzymes'], correct: 'C' },
+                        { q: 'A zygote forms after which process?', choices: ['Mitosis','Transcription','Fertilization','Meiosis'], correct: 'C' }
+                    ];
+
+                    const answers = qa.map(item=>item.correct);
+
+                    const container = document.getElementById('questionContainer');
+                    // render questions dynamically
+                    qa.forEach((item, idx)=>{
+                        const li = document.createElement('div');
+                        li.className = 'question';
+                        li.dataset.index = idx;
+
+                        const qdiv = document.createElement('div');
+                        qdiv.className = 'q';
+                        qdiv.textContent = item.q;
+                        li.appendChild(qdiv);
+
+                        const choices = document.createElement('div');
+                        choices.className = 'choices';
+
+                        ['A','B','C','D'].forEach((letter, i)=>{
+                            const input = document.createElement('input');
+                            input.type = 'radio';
+                            input.id = 'q'+(idx+1)+letter;
+                            input.name = 'q'+(idx+1);
+                            input.value = letter;
+
+                            const label = document.createElement('label');
+                            label.id = input.id + '-label';
+                            label.htmlFor = input.id;
+                            label.textContent = letter + '. ' + (item.choices[i] || '');
+
+                            choices.appendChild(input);
+                            choices.appendChild(label);
+                        });
+
+                        li.appendChild(choices);
+                        container.appendChild(li);
+                    });
+
+                    let questions = Array.from(document.querySelectorAll('.quiz .question'));
+                    let current = 0;
+
+                    const qCounter = document.getElementById('qCounter');
+
+                    function showQuestion(index){
+                        questions.forEach((q,i)=> q.classList.toggle('active', i===index));
+                        current = index;
+                        qCounter.textContent = 'Question ' + (current+1) + ' of ' + questions.length;
+                        updateControls();
+                    }
+
+                    function updateControls(){
+                        const qEl = questions[current];
+                        document.getElementById('prevBtn').disabled = (current===0);
+                        document.getElementById('nextBtn').disabled = (current===questions.length-1);
+                    }
+
+                    function clearQuestionHighlights(qEl){
+                        qEl.querySelectorAll('label').forEach(l=>{ l.classList.remove('correct','incorrect','disabled'); });
+                    }
+
+                    // auto-check when a choice is selected
+                    function checkQuestion(qEl){
+                        const idx = parseInt(qEl.dataset.index,10);
+                        const correct = answers[idx];
+                        const sel = qEl.querySelector('input[type=radio]:checked');
+                        clearQuestionHighlights(qEl);
+                        const correctLabel = qEl.querySelector('#q'+(idx+1)+correct+'-label');
+                        if(correctLabel) correctLabel.classList.add('correct');
+                        if(sel && sel.value !== correct){
+                            const selLabel = qEl.querySelector('#'+sel.id+'-label');
+                            if(selLabel) selLabel.classList.add('incorrect');
+                        }
+                        qEl.querySelectorAll('input[type=radio]').forEach(r=> r.disabled = true);
+                        qEl.querySelectorAll('label').forEach(l=> l.classList.add('disabled'));
+                        qEl.dataset.checked = 'true';
+                        updateControls();
+                    }
+
+                    // attach listeners to newly created inputs
+                    document.querySelectorAll('.quiz .choices input[type=radio]').forEach(r=>{
+                        r.addEventListener('change', function(e){
+                            const qEl = this.closest('.question');
+                            if(qEl.dataset.checked !== 'true') checkQuestion(qEl);
+                        });
+                    });
+
+                    document.getElementById('nextBtn').addEventListener('click', function(){
+                        if(current < questions.length-1) showQuestion(current+1);
+                    });
+                    document.getElementById('prevBtn').addEventListener('click', function(){
+                        if(current > 0) showQuestion(current-1);
+                    });
+
+                    document.getElementById('resetBtn').addEventListener('click', function(){
+                        questions.forEach((q,i)=>{
+                            q.dataset.checked = 'false';
+                            q.querySelectorAll('input[type=radio]').forEach(r=>{ r.checked = false; r.disabled = false; });
+                            clearQuestionHighlights(q);
+                        });
+                        document.getElementById('result').textContent = '';
+                        showQuestion(0);
+                    });
+
+                    document.getElementById('toggleKey').addEventListener('click', function(){
+                        const key = document.getElementById('answerKey');
+                        if(key.style.display === 'none'){ key.style.display = 'block'; this.textContent = 'Hide Answer Key'; }
+                        else { key.style.display = 'none'; this.textContent = 'Show Answer Key'; }
+                    });
+
+                    // initialize
+                    showQuestion(0);
+                })();
+            </script>
+
+    </div>
+</body>
+</html>
